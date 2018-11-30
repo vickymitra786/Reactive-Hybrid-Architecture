@@ -1,2 +1,4 @@
-# Reactive-Hybrid-Architecture
-A reactive architecture with NO REACTIVE FRAMEWORK
+# Reactive Hybrid Architecture
+### Reactive Architecture with NO REACTIVE FRAMEWORK 
+
+#### RHA = (Clean Code Philosophy + MVVM) - 3rd Party Reactive Frameworks
