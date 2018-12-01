@@ -93,7 +93,7 @@ are supportive files that are created here to support better programming.
   *Controllers should never directly handle anything that deals with data and presentation, those are the jobs for
   Model and Views respectively.*
 
-  I will only try and explain the piece of code that shows the working of our Reactive Hybrid Architecture.
+  **I will only try and explain the piece of code that shows the working of our Reactive Hybrid Architecture.**
   
   
   #### 1. ProsViewController
@@ -782,6 +782,7 @@ class Box<T>
 ```
 
 
+#### Reaction Point
 ```
 var value: T
 {
