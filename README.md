@@ -247,7 +247,7 @@ extension ConsViewController
  *ViewModel is the intermediate layer between View/ViewController and the Model. ViewModel takeout what its not meant for ViewController, like data and presentation out of it. View/ViewController can access View Model but not other way around and similarly View Model can access Model but not other way around*.
 
 
-#### 1. ProsViewModel
+ #### 1. ProsViewModel
 ```
 class ProsViewModel
 {
@@ -337,7 +337,7 @@ class ProsViewModel
   - getPros is a method of the ProsApi struct that has implemented ProsWorkerProtocol, this will fetch the Pros of AI.
   
   
-#### 2. ConsViewModel
+ #### 2. ConsViewModel
 
 ```
 class ConsViewModel
@@ -427,3 +427,98 @@ class ConsViewModel
    de-coupled.
 
   - getCons is a method of the ConsApi struct that has implemented ConsWorkerProtocol, this will fetch the Cons of AI.
+  
+  
+### Model
+
+ 1. AI
+ 
+ *This is the Model which will be used by View Model, which then extract only the specific information that it needs to send to the View/ViewController*.
+ 
+ 
+ #### AI
+ ```
+ class AI
+ {
+     var advantages: [String]?
+     var disadvantages: [String]?
+
+     init(advantages: [String]?, disadvantages: [String]?)
+     {
+         self.advantages = advantages
+         self.disadvantages = disadvantages
+     }
+ }
+```
+
+
+### Worker
+
+ 1. ProsWorkerProtocol
+ 2. ProsWorker
+ 3. ConsWorkerProtocol
+ 4. ConsWorker
+
+ *Workers are necessary pieces of puzzle that helps us build reusable components with workers and service objects*.
+
+#### 1. ProsWorkerProtocol
+```
+protocol ProsWorkerProtocol
+{
+    func getPros(completionHandler: @escaping ProsWorkerHandler)
+}
+
+typealias ProsWorkerHandler = (ProsWorkerResult<AI>)-> Void
+
+enum ProsWorkerResult<U>
+{
+    case success(U)
+    case failure(ProsWorkerFailure)
+}
+
+enum ProsWorkerFailure
+{
+    case failed(String)
+}
+```
+
+ **To explain ProsWorkerProtocol, we are creating a bottom up approach.**
+
+```
+ enum ProsWorkerFailure
+ {
+     case failed(String)
+ }
+```
+- enum ProsWorkerFailure will deliver the failure message returned from Service
+
+
+```
+ enum ProsWorkerResult<U>
+{
+    case success(U)
+    case failure(ProsWorkerFailure)
+}
+```
+- enum ProsWorkerResult<U> will deliver the success and failure (failure is further encapsulate in ProsWorkerFailure enum) message returned from Service.
+- "U" is the Generic cast for the type that is to be returned from Service.
+
+```
+typealias ProsWorkerHandler = (ProsWorkerResult<AI>)-> Void
+```
+- We are creating a closure with parameter of type ProsWorkerResult<AI>, which we gonna return from Service class.
+
+
+#### 2. ProsWorker
+```
+class ProsWorker
+{
+    var prosWorkerProtocol: ProsWorkerProtocol?
+
+    init(prosWorkerProtocol: ProsWorkerProtocol?)
+    {
+        self.prosWorkerProtocol = prosWorkerProtocol
+    }
+}
+```
+- ProsWorker will be initiated by taking in any type that implements ProsWorkerProtocol.
