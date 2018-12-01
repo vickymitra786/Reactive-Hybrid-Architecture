@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Bucket
+   type = "1"
+   version = "2.0">
+   <Breakpoints>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Hybrid Architecture/View+ViewController/Pros/ProsViewController.swift"
+            timestampString = "565077155.7905411"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "77"
+            endingLineNumber = "77"
+            landmarkName = "setListener()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Hybrid Architecture/View+ViewController/Pros/ProsViewController.swift"
+            timestampString = "565077155.803692"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "73"
+            endingLineNumber = "73"
+            landmarkName = "setListener()"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Hybrid_Architecture.ProsViewController.setListener() -&gt; ()"
+                  moduleName = "Hybrid Architecture"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/vivek/Documents/workspace/Hybrid%20Architecture/Hybrid%20Architecture/View+ViewController/Pros/ProsViewController.swift"
+                  timestampString = "565284261.127894"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "73"
+                  endingLineNumber = "73"
+                  offsetFromSymbolStart = "95">
+               </Location>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 (Hybrid_Architecture.Content) -&gt; () in Hybrid_Architecture.ProsViewController.setListener() -&gt; ()"
+                  moduleName = "Hybrid Architecture"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/vivek/Documents/workspace/Hybrid%20Architecture/Hybrid%20Architecture/View+ViewController/Pros/ProsViewController.swift"
+                  timestampString = "565284261.132496"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "73"
+                  endingLineNumber = "73"
+                  offsetFromSymbolStart = "17">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+   </Breakpoints>
+</Bucket>
