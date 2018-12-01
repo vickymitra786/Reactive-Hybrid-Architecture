@@ -31,6 +31,10 @@
   - Another important aspect of this architecture is, **that it's is not dependent on any framework for its Reactiveness**, so we can implement the same philosophy in **any language or platform we want**. In my workplace the above architecture has been implemented in iOS using Swift and Android using Kotlin for production level code.
   
   
+## TODO list
+  1. Taking the routing out of ViewControllers into a separate file
+  2. Formatting the ModelView further.
+  
   
 ## Lead by example:
    Without wasting much time, lets get our hands dirty with Reactive Hybrid Architecture.
@@ -522,3 +526,303 @@ class ProsWorker
 }
 ```
 - ProsWorker will be initiated by taking in any type that implements ProsWorkerProtocol.
+
+
+#### 3. ConsWorkerProtocol
+```
+protocol ConsWorkerProtocol
+{
+    func getCons(completionHandler: @escaping ConsWorkerHandler)
+}
+
+typealias ConsWorkerHandler = (ConsWorkerResult<AI>)-> Void
+
+enum ConsWorkerResult<U>
+{
+    case success(U)
+    case failure(ConsWorkerFailure)
+}
+
+enum ConsWorkerFailure
+{
+    case failed(String)
+}
+```
+
+**To explain ConsWorkerProtocol, we are creating a bottom up approach.**
+
+```
+enum ConsWorkerFailure
+{
+    case failed(String)
+}
+```
+- enum ConsWorkerFailure will deliver the failure message returned from Service
+
+
+```
+enum ConsWorkerResult<U>
+{
+    case success(U)
+    case failure(ConsWorkerFailure)
+}
+```
+- enum ConsWorkerResult<U> will deliver the success and failure (failure is further encapsulate in ConsWorkerFailure enum) message returned from Service.
+- "U" is the Generic cast for the type that is to be returned from Service.
+
+
+```
+typealias ConsWorkerHandler = (ConsWorkerResult<AI>)-> Void
+```
+- We are creating a closure with parameter of type ConsWorkerResult<AI>, which we gonna return from Service class.
+
+
+#### 4. ConsWorker
+```
+class ConsWorker
+{
+    var consWorkerProtocol: ConsWorkerProtocol?
+
+    init(consWorkerProtocol: ConsWorkerProtocol?)
+    {
+        self.consWorkerProtocol = consWorkerProtocol
+    }
+}
+```
+- ConsWorker will be initiated by taking in any type that implements ConsWorkerProtocol.
+
+
+### Service
+
+ 1. ProsApi
+ 2. ConsApi
+
+
+ *Services are those types that implements WorkerProtocols, Services are used to fetch results which can be
+ from Apis, DataBase , certain calculative processes, etc.*
+
+  **Here just for demonstration purpose I have used the naming convention as ProsApi and ConsApi, even though I am returning data
+  directly instead of calling Apis.**
+
+
+#### 1. ProsApi
+```
+struct ProsApi : ProsWorkerProtocol
+{
+    func getPros(completionHandler: @escaping ProsWorkerHandler)
+    {
+        let ai: AI? = AI(advantages: ["Error reduction", "Increase work efficiency", "Reduced cost of training", "No breaks"], disadvantages: nil)
+
+        if let _ai = ai
+        {
+            completionHandler(ProsWorkerResult.success(_ai))
+        }
+        else
+        {
+            completionHandler(ProsWorkerResult.failure(ProsWorkerFailure.failed(Constant.NO_PROS)))
+        }
+    }
+}
+
+completionHandler(ProsWorkerResult.success(_ai))
+```
+
+- As we can see that the return type of getPros method is ProsWorkerHandler, we are returning ProsWorkerResult.success(_ai), now hows that being done....
+
+  In the below mentioned code, we can see that we have defined a closure which takes ProsWorkerResult enum of AI type. This type AI
+  becomes the type of the data which we will pass in success from Service.
+
+```
+  typealias ProsWorkerHandler = (ProsWorkerResult<AI>)-> Void
+
+  enum ProsWorkerResult<U>
+  {
+      case success(U)
+      case failure(ProsWorkerFailure)
+  }
+
+
+completionHandler(ProsWorkerResult.failure(ProsWorkerFailure.failed(Constant.NO_PROS)))
+```
+- The above line of code is quite easy to understand, we are passing the error message to failure case which in turn is of type ProsWorkerFailure
+```
+  enum ProsWorkerFailure
+  {
+      case failed(String)
+  }
+```
+
+
+#### 2. ConsApi
+```
+struct ConsApi : ConsWorkerProtocol
+{
+    func getCons(completionHandler: @escaping ConsWorkerHandler)
+    {
+        let ai: AI? = AI(advantages: nil, disadvantages: ["High cost", "Lesser jobs", "Fear of malicious implementation"])
+
+        if let _ai = ai
+        {
+            completionHandler(ConsWorkerResult.success(_ai))
+        }
+        else
+        {
+            completionHandler(ConsWorkerResult.failure(ConsWorkerFailure.failed(Constant.NO_CONS)))
+        }
+    }
+}
+
+completionHandler(ConsWorkerResult.success(_ai))
+```
+
+- As we can see that the return type of getCons method is ConsWorkerHandler, we are returning ConsWorkerResult.success(_ai), now hows that being done....
+
+  In the below mentioned code, we can see that we have defined a closure which takes ConsWorkerResult enum of AI type. This type AI
+  becomes the type of the data which we will pass in success from Service.
+```
+  typealias ConsWorkerHandler = (ConsWorkerResult<AI>)-> Void
+
+  enum ConsWorkerResult<U>
+  {
+      case success(U)
+      case failure(ConsWorkerFailure)
+  }
+
+completionHandler(ConsWorkerResult.failure(ConsWorkerFailure.failed(Constant.NO_CONS)))
+```
+
+- The above line of code is quite easy to understand, we are passing the error message to failure case which in turn is of type ConsWorkerFailure
+```
+  enum ConsWorkerFailure
+  {
+      case failed(String)
+  }
+```
+
+
+### Box
+
+ 1. Box
+ 2. Content
+
+*This is the magic black box, that helps in making this architecture reactive without using any 3rd party framework. I feel
+its the architecture that should adopt to the code not the other way around. So saying that lets dig in.*
+
+#### 1. Box
+```
+class Box<T>
+{
+    typealias Listener = (T)-> Void
+    var listener: Listener?
+
+    var value: T
+    {
+        didSet
+        {
+            self.listener?(value)
+        }
+    }
+
+    init(_ value: T)
+    {
+        self.value = value
+    }
+
+    func bind(listener: Listener?)
+    {
+        self.listener = listener
+        self.listener?(value)
+    }
+}
+```
+
+#### Breaking it up
+```
+ typealias Listener = (T)-> Void
+```
+ - Listener is a closure which takes a parameter of type T. (ie. T is the place-holder for a type that we define while initialising Box instance)
+
+```
+ func bind(listener: Listener?)
+ {
+     self.listener = listener
+     self.listener?(value)
+ }
+```
+ - bind is used for binding the listener to the variable of type Box in the ViewModel from its respective ViewController.
+
+ **Example:**
+```
+ class ProsViewModel
+ {
+     // Reactive properties
+     var isErrorFree: Box<Content> = Box(Content())    // initialising the Box instance
+    .
+    .
+    .
+ }
+```
+```
+ extension ProsViewController
+{
+    internal func setListener()
+    {
+        self.prosViewModel.isErrorFree.bind           // binding the variable isErrorFree from ProsViewModel
+        {[unowned self] in
+                if $0.status == false                 // action to be taken when value is assigned to that variable isErrorFree
+                {
+                                                      // Here we are raising an alert for no pros in the list.
+
+                    self.utility.raiseAlert(alertTitle: Constant.ALERT, alertMessage: $0.message ?? "", viewController: self)
+                    return
+                }
+        }
+    }
+}
+```
+
+
+```
+var value: T
+{
+    didSet
+    {
+        self.listener?(value)
+    }
+}
+```
+- This is responsible for making the listener react whenever a value is assigned to the variable of type Box.
+
+**Example:**
+```
+  self.isErrorFree.value.message = msg
+  self.isErrorFree.value.status = false
+```
+
+
+ #### 2. Content
+```
+ struct Content
+{
+   var status: Bool = true
+   var message: String? = nil
+}
+```
+ - The main reason of creating this Content struct is to make Box take different types instead of just one.
+
+ **Example:**
+  *Instead of*
+``` 
+var isErrorFree: Box<Bool> = Box(false)
+```
+  *or*
+```
+var isErrorFree: Box<String> = Box("")
+```
+  *We can use Content type to define all the types that Box can hold*
+```
+var isErrorFree: Box<Content> = Box(Content())
+```
+
+
+**Thats all as of now, I wish you all the luck implementing the above architectural philosophy. This would look hetic and lots of work but trust me during the bug hunting, changes and feature addition this will be a blessing.**
