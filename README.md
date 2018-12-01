@@ -826,4 +826,4 @@ var isErrorFree: Box<Content> = Box(Content())
 ```
 
 
-**Thats all as of now, I wish you all the luck implementing the above architectural philosophy. This would look hetic and lots of work but trust me during the bug hunting, changes and feature addition this will be a blessing.**
+**That's all as of now, I wish you all the luck implementing the above architectural philosophy. This would look hetic and lots of work but trust me during the bug hunting, changes and feature addition this will be a blessing.**
