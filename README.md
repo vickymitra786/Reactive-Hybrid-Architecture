@@ -812,6 +812,7 @@ var value: T
  - The main reason of creating this Content struct is to make Box take different types instead of just one.
 
  **Example:**
+ 
   *Instead of*
 ``` 
 var isErrorFree: Box<Bool> = Box(false)
